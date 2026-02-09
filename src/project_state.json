@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "Project renamed to SUTRA; logo requested.",
+  "architectural_notes": [],
+  "known_issues": [],
+  "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- SUTRA logo on white background, matching the uploaded reference mark with circular swoosh and upward arrow; no extra text (sutra-logo.dim_512x512.png)\n- Square favicon derived from the same SUTRA logo, centered with padding on transparent or white background (sutra-favicon.dim_32x32.png)",
+  "existing_features": [
+    {
+      "id": "feature-rename-all-user-facing-application-naming-from-habitual-to-sutra-including-the-browser-tab-title-and-the-main-header-welcome-text-in-the-ui",
+      "title": "Rename all user-facing application naming from “Habitual” to “SUTRA”, including the browser tab title and the main header/welcome text in the UI.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-new-sutra-logo-image-asset-matching-the-uploaded-reference-logo-image-png-and-use-it-in-the-app-header-in-place-of-the-current-green-gradient-square-checkmark-icon-logo",
+      "title": "Create a new SUTRA logo image asset matching the uploaded reference logo (image.png) and use it in the app header in place of the current green gradient square + checkmark icon logo.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-favicon-derived-from-the-sutra-logo-and-update-frontend-index-html-to-reference-it-so-browser-tabs-show-the-sutra-icon",
+      "title": "Add a favicon derived from the SUTRA logo and update `frontend/index.html` to reference it so browser tabs show the SUTRA icon.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Rename the app/project to \"SUTRA\"",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Create/design a logo for SUTRA (details TBD)",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "SUTRA",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

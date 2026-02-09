@@ -1,0 +1,63 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-rename-all-user-facing-application-naming-from-habitual-to-sutra-including-the-browser-tab-title-and-the-main-header-welcome-text-in-the-ui",
+      "featureTitle": "Rename all user-facing application naming from “Habitual” to “SUTRA”, including the browser tab title and the main header/welcome text in the UI.",
+      "files": [
+        "frontend/index.html",
+        "frontend/src/App.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "build-template-react@1.0.0",
+        "shadcn-ui@1.0.0",
+        "initial-app@1.0.0",
+        "authorization@4.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-create-a-new-sutra-logo-image-asset-matching-the-uploaded-reference-logo-image-png-and-use-it-in-the-app-header-in-place-of-the-current-green-gradient-square-checkmark-icon-logo",
+      "featureTitle": "Create a new SUTRA logo image asset matching the uploaded reference logo (image.png) and use it in the app header in place of the current green gradient square + checkmark icon logo.",
+      "files": [
+        "frontend/src/App.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "build-template-react@1.0.0",
+        "shadcn-ui@1.0.0",
+        "initial-app@1.0.0",
+        "authorization@4.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-favicon-derived-from-the-sutra-logo-and-update-frontend-index-html-to-reference-it-so-browser-tabs-show-the-sutra-icon",
+      "featureTitle": "Add a favicon derived from the SUTRA logo and update `frontend/index.html` to reference it so browser tabs show the SUTRA icon.",
+      "files": [
+        "frontend/index.html"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "build-template-react@1.0.0",
+        "shadcn-ui@1.0.0",
+        "initial-app@1.0.0",
+        "authorization@4.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

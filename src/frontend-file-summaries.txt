@@ -1,0 +1,4 @@
+{
+  "frontend/index.html": "HTML entry point with updated title \"SUTRA\" and favicon link to the generated SUTRA icon.",
+  "frontend/src/App.tsx": "Main application component for the SUTRA habit tracker with Internet Identity authentication, habit management, and updated branding including the SUTRA logo image and updated welcome text."
+}

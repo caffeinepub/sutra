@@ -1,0 +1,91 @@
+{
+  "kind": "build_request",
+  "title": "Rename app to SUTRA and replace UI logo with provided Sutra logo",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Rename all user-facing application naming from “Habitual” to “SUTRA”, including the browser tab title and the main header/welcome text in the UI.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-1",
+          "msg-user-2"
+        ],
+        "quotes": [
+          "rename this app as SUTRA",
+          "SUTRA"
+        ]
+      },
+      "acceptanceCriteria": [
+        "`frontend/index.html` `<title>` displays “SUTRA”.",
+        "The main header in `frontend/src/App.tsx` displays “SUTRA” instead of “Habitual”.",
+        "The logged-out welcome headline in `frontend/src/App.tsx` displays “Welcome to SUTRA” instead of “Welcome to Habitual”."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Create a new SUTRA logo image asset matching the uploaded reference logo (image.png) and use it in the app header in place of the current green gradient square + checkmark icon logo.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-1"
+        ],
+        "quotes": [
+          "make the logo as"
+        ]
+      },
+      "acceptanceCriteria": [
+        "A new generated logo image exists under `frontend/public/assets/generated/` with the filename specified in image requirements.",
+        "`frontend/src/App.tsx` header displays the new logo image (not the lucide `Check` icon inside the green gradient block).",
+        "The logo is sized appropriately for the existing header layout (no overflow, no distortion; preserves aspect ratio)."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Add a favicon derived from the SUTRA logo and update `frontend/index.html` to reference it so browser tabs show the SUTRA icon.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-1",
+          "msg-user-2"
+        ],
+        "quotes": [
+          "rename this app as SUTRA and make the logo as",
+          "SUTRA"
+        ]
+      },
+      "acceptanceCriteria": [
+        "A favicon image exists under `frontend/public/assets/generated/` with the filename specified in image requirements.",
+        "`frontend/index.html` includes a `<link rel=\"icon\" ...>` pointing to the generated favicon file.",
+        "Reloading the app shows the SUTRA favicon in the browser tab."
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not edit files under `frontend/src/hooks/useInternetIdentity.ts`, `frontend/src/hooks/useInternetIdentity.tsx`, `frontend/src/hooks/useActor.ts`, `frontend/src/main.tsx`, or anything in `frontend/src/components/ui` (compose instead of modifying).",
+    "Keep backend logic in the single Motoko actor (`backend/main.mo`); no backend changes are required for rename/logo work."
+  ],
+  "nonGoals": [
+    "Changing habit-tracking functionality, data models, or storage behavior.",
+    "Adding new authentication methods beyond Internet Identity.",
+    "Redesigning the full UI beyond what is necessary to update the app name and swap in the new logo/favicon."
+  ],
+  "imageRequirements": {
+    "required": [
+      "SUTRA logo on white background, matching the uploaded reference mark with circular swoosh and upward arrow; no extra text (sutra-logo.dim_512x512.png)",
+      "Square favicon derived from the same SUTRA logo, centered with padding on transparent or white background (sutra-favicon.dim_32x32.png)"
+    ],
+    "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
+  }
+}

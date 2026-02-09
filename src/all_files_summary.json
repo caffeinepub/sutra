@@ -1,0 +1,21 @@
+{
+  "backend/main.mo": "Motoko canister implementing access-controlled user profiles, habit creation, and habit completion storage using stable maps.",
+  "feature_evidence.json": "Feature evidence report listing UI rename, logo update, and favicon tasks with associated files and components.",
+  "frontend-file-summaries.txt": "Text file mapping frontend file paths to short descriptions of their roles in the updated SUTRA UI.",
+  "frontend/index.html": "HTML entry point setting the SUTRA title and linking the generated favicon.",
+  "frontend/src/App.tsx": "Main React app handling authentication, habit display, habit creation, and SUTRA-branded header and welcome UI.",
+  "frontend/src/components/CreateHabitModal.tsx": "Modal component for creating a new habit with name and color selection.",
+  "frontend/src/components/EditDisplayNameModal.tsx": "Modal allowing users to update their display name with validation and submission handling.",
+  "frontend/src/components/EditHabitModal.tsx": "Modal for editing an existing habit's name and color using preset color options.",
+  "frontend/src/components/HabitCard.tsx": "Renders a habit card with a 2‑week completion grid, edit/delete actions, and toggling of daily completions using optimistic updates.",
+  "frontend/src/components/HabitHistoryModal.tsx": "Displays a 6‑month calendar view of a habit’s completion history with structured week layouts and completion lookups.",
+  "frontend/src/components/ProfileSection.tsx": "Shows user profile info with login/logout, display name editing, and a dropdown menu tied to Internet Identity state.",
+  "frontend/src/hooks/useActor.ts": "Initializes and caches the backend actor based on Internet Identity and refreshes dependent queries when the actor changes.",
+  "frontend/src/hooks/useInternetIdentity.ts": "Provides Internet Identity auth context, handling login, logout, stored identity loading, and exposing identity state flags.",
+  "frontend/src/hooks/useQueries.ts": "Defines React Query hooks for habits, completions, and mutations including optimistic completion toggling.",
+  "frontend/src/index.css": "Tailwind setup with base styles, custom animations, scrollbar styling, and focus/transition utilities.",
+  "frontend/src/main.tsx": "Bootstraps the app with React Query and Internet Identity providers and loads global styles.",
+  "frontend/src/utils/urlParams.ts": "Utility for reading URL parameters (including hash routing) and persisting them in sessionStorage, plus helpers to clear stored or hash-based params.",
+  "frontend/tailwind.config.js": "Tailwind CSS config defining content paths and extending the theme with an Inter-based font family.",
+  "project_state.json": "Metadata describing the SUTRA project state, required assets, existing features, and pending requests."
+}

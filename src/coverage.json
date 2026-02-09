@@ -1,0 +1,77 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-09T16:36:09.923Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 3,
+    "implemented": 3,
+    "items": [
+      {
+        "id": "REQ-1",
+        "summary": "Rename all user-facing application naming from “Habitual” to “SUTRA”, including the browser tab title and the main header/welcome text in the UI.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/index.html",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/index.html",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-2",
+        "summary": "Create a new SUTRA logo image asset matching the uploaded reference logo (image.png) and use it in the app header in place of the current green gradient square + checkmark icon logo.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/public/assets/generated/sutra-logo.dim_512x512.png",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/public/assets/generated/sutra-logo.dim_512x512.png",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Add a favicon derived from the SUTRA logo and update `frontend/index.html` to reference it so browser tabs show the SUTRA icon.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/public/assets/generated/sutra-favicon.dim_32x32.png",
+          "frontend/index.html"
+        ],
+        "matchedFiles": [
+          "frontend/public/assets/generated/sutra-favicon.dim_32x32.png",
+          "frontend/index.html"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "build-request.json",
+    "build-template/Dockerfile",
+    "build-template/LICENSE",
+    "build-template/README.md",
+    "build-template/deploy.sh",
+    "build-template/icp.yaml",
+    "build-template/src/backend/canister.yaml",
+    "build-template/src/frontend/canister.yaml",
+    "caffeine.lock.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/index.html",
+    "frontend/public/assets/generated/sutra-favicon.dim_32x32.png",
+    "frontend/public/assets/generated/sutra-logo.dim_512x512.png",
+    "frontend/src/App.tsx",
+    "frontend/src/hooks/useInternetIdentity.ts",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

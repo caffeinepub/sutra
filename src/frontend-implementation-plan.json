@@ -1,0 +1,70 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Rename app to SUTRA and update logo + favicon",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Rename all user-facing application naming from “Habitual” to “SUTRA” including browser tab title and key UI headings.",
+      "acceptanceCriteria": [
+        "`frontend/index.html` `<title>` displays “SUTRA”.",
+        "The main header in `frontend/src/App.tsx` displays “SUTRA” instead of “Habitual”.",
+        "The logged-out welcome headline in `frontend/src/App.tsx` displays “Welcome to SUTRA” instead of “Welcome to Habitual”."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/index.html",
+          "operation": "modify",
+          "description": "Update the document <title> text to use “SUTRA” (removing “Habitual | Habitual Application”)."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Replace user-facing strings in the header and logged-out welcome section from “Habitual” to “SUTRA” / “Welcome to SUTRA” while keeping existing layout and behavior unchanged."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Add the provided SUTRA logo as a generated asset and display it in the app header instead of the current gradient block + checkmark icon.",
+      "acceptanceCriteria": [
+        "A new generated logo image exists under `frontend/public/assets/generated/` with the filename specified in image requirements.",
+        "`frontend/src/App.tsx` header displays the new logo image (not the lucide `Check` icon inside the green gradient block).",
+        "The logo is sized appropriately for the existing header layout (no overflow, no distortion; preserves aspect ratio)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/public/assets/generated/sutra-logo.dim_512x512.png",
+          "operation": "create",
+          "description": "Add the generated SUTRA logo image asset (white background, matching the uploaded reference mark; no extra text) at `frontend/public/assets/generated/sutra-logo.dim_512x512.png`."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Swap the current header logo (green gradient square + lucide `Check` icon and its helper styling) with an <img> that references `frontend/public/assets/generated/sutra-logo.dim_512x512.png`, ensuring it preserves aspect ratio and fits the existing header size without overflow or distortion."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Add a favicon derived from the SUTRA logo and wire it in `index.html` so the browser tab shows the SUTRA icon.",
+      "acceptanceCriteria": [
+        "A favicon image exists under `frontend/public/assets/generated/` with the filename specified in image requirements.",
+        "`frontend/index.html` includes a `<link rel=\"icon\" ...>` pointing to the generated favicon file.",
+        "Reloading the app shows the SUTRA favicon in the browser tab."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/public/assets/generated/sutra-favicon.dim_32x32.png",
+          "operation": "create",
+          "description": "Add the generated square favicon asset derived from the SUTRA logo at `frontend/public/assets/generated/sutra-favicon.dim_32x32.png` (centered with padding on transparent or white background)."
+        },
+        {
+          "path": "frontend/index.html",
+          "operation": "modify",
+          "description": "Add/update the favicon reference by including a `<link rel=\"icon\" ...>` that points to `frontend/public/assets/generated/sutra-favicon.dim_32x32.png` so browser tabs display the SUTRA icon."
+        }
+      ]
+    }
+  ]
+}
