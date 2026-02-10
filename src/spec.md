@@ -1,11 +1,13 @@
 # Specification
 
 ## Summary
-**Goal:** Rename the app to SUTRA and update branding by replacing the header logo and browser favicon with SUTRA assets matching the provided reference.
+**Goal:** Add habit categories across the backend and UI so users can create, edit, and organize habits by category.
 
 **Planned changes:**
-- Update all user-facing naming from “Habitual” to “SUTRA”, including the browser tab title and key UI header/welcome text.
-- Add a new generated SUTRA logo image asset (matching the uploaded reference mark) and replace the current header icon with this logo while preserving layout and aspect ratio.
-- Add a SUTRA-derived favicon asset and update `frontend/index.html` to reference it so the browser tab displays the SUTRA icon.
+- Extend the backend Habit data model to include a text `category` field and update habit CRUD methods to persist/return it with existing access-control behavior unchanged.
+- Ensure upgrades preserve existing stored habits by assigning a safe default category to any habit missing one.
+- Update the Create Habit and Edit Habit modals to include a “Category” input (with sensible defaults) and submit the selected category on save.
+- Display each habit’s category on Habit cards and add a way to organize habits by category (either grouping or a category filter control).
+- Update frontend types and React Query hooks/mutations to match the updated habit/category API.
 
-**User-visible outcome:** The app shows “SUTRA” in the browser tab and UI headings, displays the new SUTRA logo in the header, and uses the SUTRA favicon in the browser tab.
+**User-visible outcome:** Users can choose a category when creating habits, change categories when editing, and see/organize habits by category in the main habits view; existing habits remain available after upgrade with a default category applied.

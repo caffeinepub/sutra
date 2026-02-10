@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { X } from "lucide-react";
-import type { Habit } from "../backend";
+import type { Habit, Category } from "../backend";
 
 interface EditHabitModalProps {
   habit: Habit;
   onClose: () => void;
-  onSubmit: (name: string, color: string) => void;
+  onSubmit: (name: string, color: string, category: Category) => void;
   isLoading: boolean;
 }
 
@@ -28,6 +28,17 @@ const PRESET_COLORS = [
   "#F43F5E", // Rose
 ];
 
+const CATEGORY_OPTIONS = [
+  { value: "health", label: "Health" },
+  { value: "exercise", label: "Exercise" },
+  { value: "work", label: "Work" },
+  { value: "education", label: "Education" },
+  { value: "hobby", label: "Hobby" },
+  { value: "social", label: "Social" },
+  { value: "finance", label: "Finance" },
+  { value: "miscellaneous", label: "Miscellaneous" },
+];
+
 function EditHabitModal({
   habit,
   onClose,
@@ -36,11 +47,12 @@ function EditHabitModal({
 }: EditHabitModalProps) {
   const [name, setName] = useState(habit.name);
   const [selectedColor, setSelectedColor] = useState(habit.color);
+  const [selectedCategory, setSelectedCategory] = useState<Category>(habit.category);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
-      onSubmit(name.trim(), selectedColor);
+      onSubmit(name.trim(), selectedColor, selectedCategory);
     }
   };
 
@@ -75,6 +87,27 @@ function EditHabitModal({
               required
               maxLength={50}
             />
+          </div>
+
+          <div>
+            <label
+              htmlFor="habit-category"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Category
+            </label>
+            <select
+              id="habit-category"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value as Category)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white"
+            >
+              {CATEGORY_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>

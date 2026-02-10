@@ -6,7 +6,9 @@ import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
+import Migration "migration";
 
+(with migration = Migration.run)
 actor {
   // Initialize the access control system
   let accessControlState = AccessControl.initState();
@@ -15,14 +17,26 @@ actor {
   type HabitId = Text;
   type Date = Text; // Using Text for date representation (YYYY-MM-DD)
 
-  type Habit = {
+  public type Category = {
+    #work;
+    #hobby;
+    #health;
+    #exercise;
+    #education;
+    #social;
+    #finance;
+    #miscellaneous;
+  };
+
+  public type Habit = {
     id : HabitId;
     name : Text;
     color : Text;
     createdAt : Date;
+    category : Category;
   };
 
-  type Completion = {
+  public type Completion = {
     habitId : HabitId;
     date : Date;
     completed : Bool;
@@ -44,23 +58,17 @@ actor {
     debug_show (Time.now());
   };
 
-  stable var users : Map.Map<Principal, UserProfile> = Map.empty();
-  stable var userHabits : Map.Map<Principal, Map.Map<HabitId, Habit>> = Map.empty();
-  stable var userCompletions : Map.Map<Principal, Map.Map<HabitId, List.List<Completion>>> = Map.empty();
+  let users = Map.empty<Principal, UserProfile>();
+  let userHabits = Map.empty<Principal, Map.Map<HabitId, Habit>>();
+  let userCompletions = Map.empty<Principal, Map.Map<HabitId, List.List<Completion>>>();
 
   // Get caller's user profile
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can access profiles");
-    };
     users.get(caller);
   };
 
   // Get another user's profile (admin only or own profile)
   public query ({ caller }) func getUserProfile(user : Principal) : async ?UserProfile {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can access profiles");
-    };
     if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
       Runtime.trap("Unauthorized: Can only view your own profile");
     };
@@ -70,7 +78,7 @@ actor {
   // Save caller's user profile
   public shared ({ caller }) func saveCallerUserProfile(profile : UserProfile) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can save profiles");
+      Runtime.trap("Unauthorized: Only users can save profiles");
     };
     users.add(caller, profile);
   };
@@ -78,7 +86,7 @@ actor {
   // Update user display name (legacy support)
   public shared ({ caller }) func setDisplayName(displayName : Text) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can set display names");
+      Runtime.trap("Unauthorized: Only users can set display name");
     };
     let profile : UserProfile = { displayName };
     users.add(caller, profile);
@@ -86,9 +94,6 @@ actor {
 
   // Retrieve user display name (legacy support)
   public query ({ caller }) func getDisplayName() : async ?Text {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can get display names");
-    };
     switch (users.get(caller)) {
       case (null) { null };
       case (?profile) { ?profile.displayName };
@@ -96,9 +101,9 @@ actor {
   };
 
   // Create new habit
-  public shared ({ caller }) func createHabit(name : Text, color : Text) : async HabitId {
+  public shared ({ caller }) func createHabit(name : Text, color : Text, category : Category) : async HabitId {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can create habits");
+      Runtime.trap("Unauthorized: Only users can create habits");
     };
 
     let id = generateHabitId(name);
@@ -107,6 +112,7 @@ actor {
       name;
       color;
       createdAt = getCurrentDate();
+      category;
     };
 
     var userHabitsMap = switch (userHabits.get(caller)) {
@@ -129,9 +135,9 @@ actor {
   };
 
   // Update habit details
-  public shared ({ caller }) func updateHabit(id : HabitId, name : Text, color : Text) : async Bool {
+  public shared ({ caller }) func updateHabit(id : HabitId, name : Text, color : Text, category : Category) : async Bool {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can update habits");
+      Runtime.trap("Unauthorized: Only users can update habits");
     };
 
     switch (userHabits.get(caller)) {
@@ -145,6 +151,7 @@ actor {
               name;
               color;
               createdAt = existingHabit.createdAt;
+              category;
             };
             userHabitsMap.add(id, updatedHabit);
             userHabits.add(caller, userHabitsMap);
@@ -158,7 +165,7 @@ actor {
   // Mark habit completion for a specific date
   public shared ({ caller }) func markCompletion(habitId : HabitId, date : Date, completed : Bool) : async Bool {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can mark completions");
+      Runtime.trap("Unauthorized: Only users can mark completions");
     };
 
     switch (userCompletions.get(caller)) {
@@ -185,10 +192,7 @@ actor {
 
   // Get all habits for the caller
   public query ({ caller }) func getHabits() : async [Habit] {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can get habits");
-    };
-
+    // Guests can query but will get empty results since they can't create habits
     switch (userHabits.get(caller)) {
       case (null) { [] };
       case (?userHabitsMap) { userHabitsMap.values().toArray() };
@@ -197,18 +201,13 @@ actor {
 
   // Get completions for a specific habit
   public query ({ caller }) func getHabitCompletions(habitId : HabitId) : async [Completion] {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can get completions");
-    };
-
+    // Guests can query but will get empty results since they can't create habits
     switch (userCompletions.get(caller)) {
       case (null) { [] };
       case (?userCompletionsMap) {
         switch (userCompletionsMap.get(habitId)) {
           case (null) { [] };
-          case (?completionList) {
-            completionList.toArray();
-          };
+          case (?completionList) { completionList.toArray() };
         };
       };
     };
@@ -217,7 +216,7 @@ actor {
   // Delete a habit
   public shared ({ caller }) func deleteHabit(habitId : HabitId) : async Bool {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can delete habits");
+      Runtime.trap("Unauthorized: Only users can delete habits");
     };
 
     switch (userHabits.get(caller)) {

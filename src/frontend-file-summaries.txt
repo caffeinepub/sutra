@@ -1,4 +1,12 @@
 {
-  "frontend/index.html": "HTML entry point with updated title \"SUTRA\" and favicon link to the generated SUTRA icon.",
-  "frontend/src/App.tsx": "Main application component for the SUTRA habit tracker with Internet Identity authentication, habit management, and updated branding including the SUTRA logo image and updated welcome text."
+  "frontend/index.html": "HTML entry point with updated title \"SUTRA\" and versioned favicon references (sutra-favicon-v2) plus fallback favicon.ico link for better browser compatibility.",
+  "frontend/src/App.tsx": "Main application component with Internet Identity authentication, habit management with category filtering, role initialization, error handling, and responsive layout with header and footer.",
+  "frontend/src/hooks/useQueries.ts": "React Query hooks for all backend operations including habits, completions, and user profiles with proper authentication guards; updated to include category parameter in create and update habit mutations.",
+  "frontend/src/hooks/useEnsureUserRole.ts": "Hook that automatically assigns the #user role to authenticated principals after login to prevent authorization errors.",
+  "frontend/src/utils/userFacingErrors.ts": "Utility function that converts backend errors into user-friendly English messages for display in the UI.",
+  "frontend/src/components/CreateHabitModal.tsx": "Modal for creating new habits with name input, category selection dropdown, color picker, inline error display, and proper loading states that prevent premature closing.",
+  "frontend/src/components/EditDisplayNameModal.tsx": "Modal for editing user display name with inline error display and proper loading states that prevent premature closing.",
+  "frontend/src/components/ProfileSection.tsx": "Profile dropdown component using the new getCallerUserProfile/saveCallerUserProfile flow with error handling that keeps the edit modal open on failure.",
+  "frontend/src/components/EditHabitModal.tsx": "Modal for editing existing habits with prefilled name, category, and color inputs; includes proper loading states and form validation.",
+  "frontend/src/components/HabitCard.tsx": "Habit card component displaying habit name, category badge, 2-week completion grid, and action buttons for edit/delete; includes modals for editing and viewing history."
 }

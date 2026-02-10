@@ -1,68 +1,94 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Rename app to SUTRA and update logo + favicon",
+  "title": "Add habit categories (frontend)",
   "requirements": [
     {
-      "id": "REQ-1",
-      "summary": "Rename all user-facing application naming from “Habitual” to “SUTRA” including browser tab title and key UI headings.",
-      "acceptanceCriteria": [
-        "`frontend/index.html` `<title>` displays “SUTRA”.",
-        "The main header in `frontend/src/App.tsx` displays “SUTRA” instead of “Habitual”.",
-        "The logged-out welcome headline in `frontend/src/App.tsx` displays “Welcome to SUTRA” instead of “Welcome to Habitual”."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/index.html",
-          "operation": "modify",
-          "description": "Update the document <title> text to use “SUTRA” (removing “Habitual | Habitual Application”)."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Replace user-facing strings in the header and logged-out welcome section from “Habitual” to “SUTRA” / “Welcome to SUTRA” while keeping existing layout and behavior unchanged."
-        }
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "summary": "Add the provided SUTRA logo as a generated asset and display it in the app header instead of the current gradient block + checkmark icon.",
-      "acceptanceCriteria": [
-        "A new generated logo image exists under `frontend/public/assets/generated/` with the filename specified in image requirements.",
-        "`frontend/src/App.tsx` header displays the new logo image (not the lucide `Check` icon inside the green gradient block).",
-        "The logo is sized appropriately for the existing header layout (no overflow, no distortion; preserves aspect ratio)."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/public/assets/generated/sutra-logo.dim_512x512.png",
-          "operation": "create",
-          "description": "Add the generated SUTRA logo image asset (white background, matching the uploaded reference mark; no extra text) at `frontend/public/assets/generated/sutra-logo.dim_512x512.png`."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Swap the current header logo (green gradient square + lucide `Check` icon and its helper styling) with an <img> that references `frontend/public/assets/generated/sutra-logo.dim_512x512.png`, ensuring it preserves aspect ratio and fits the existing header size without overflow or distortion."
-        }
-      ]
-    },
-    {
       "id": "REQ-3",
-      "summary": "Add a favicon derived from the SUTRA logo and wire it in `index.html` so the browser tab shows the SUTRA icon.",
+      "summary": "Add category selection to the Create Habit modal and submit the chosen category during habit creation.",
       "acceptanceCriteria": [
-        "A favicon image exists under `frontend/public/assets/generated/` with the filename specified in image requirements.",
-        "`frontend/index.html` includes a `<link rel=\"icon\" ...>` pointing to the generated favicon file.",
-        "Reloading the app shows the SUTRA favicon in the browser tab."
+        "Create Habit modal includes a \"Category\" input (English label) with sensible defaults (at minimum: Health, Work, Personal).",
+        "Creating a habit sends name, color, and category, and the created habit shows up with its category preserved after refresh.",
+        "User-facing text is in English and matches the existing UI tone."
       ],
       "file_operations": [
         {
-          "path": "frontend/public/assets/generated/sutra-favicon.dim_32x32.png",
-          "operation": "create",
-          "description": "Add the generated square favicon asset derived from the SUTRA logo at `frontend/public/assets/generated/sutra-favicon.dim_32x32.png` (centered with padding on transparent or white background)."
+          "path": "frontend/src/components/CreateHabitModal.tsx",
+          "operation": "modify",
+          "description": "Add a \"Category\" form control with default options (Health, Work, Personal) and include category in the modal submit callback. Use existing styling patterns and compose existing UI (do not edit shadcn/ui internals). Verify the component's usage instructions before implementing."
         },
         {
-          "path": "frontend/index.html",
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Add/update the favicon reference by including a `<link rel=\"icon\" ...>` that points to `frontend/public/assets/generated/sutra-favicon.dim_32x32.png` so browser tabs display the SUTRA icon."
+          "description": "Update the create-habit handler to accept category from CreateHabitModal and pass it into the create habit mutation; keep existing error and disabled-state behavior intact. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Add category editing to the Edit Habit modal and submit the updated category when saving changes.",
+      "acceptanceCriteria": [
+        "Edit Habit modal includes a \"Category\" input prefilled with the habit’s current category.",
+        "Saving edits persists the updated category and it is visible after refetch/reload.",
+        "No regressions to existing edit functionality (name/color) or loading/disabled states."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/EditHabitModal.tsx",
+          "operation": "modify",
+          "description": "Add a \"Category\" control prefilled from habit.category and extend onSubmit to pass (name, color, category). Keep existing layout, validation, and loading/disabled behavior. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/HabitCard.tsx",
+          "operation": "modify",
+          "description": "Update the edit flow wiring so HabitCard passes category into EditHabitModal and includes category in the update mutation payload. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Show habit categories on habit cards and add a category-based organization control in the main habits view.",
+      "acceptanceCriteria": [
+        "Each HabitCard displays the habit category (e.g., as a small label/badge) without breaking the current layout.",
+        "The habits list is grouped by category or provides a category filter control (choose one approach) to help users organize habits.",
+        "The UI remains usable on mobile and desktop layouts already supported by the app."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/HabitCard.tsx",
+          "operation": "modify",
+          "description": "Display the habit category as a small label/badge near the habit title while preserving the current card layout and responsiveness. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add a category filter control in the authenticated habits view (e.g., an \"All categories\" option plus available categories) and filter the rendered HabitCard list accordingly; ensure it works well in existing mobile/desktop layout. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Update React Query mutations/types usage so habit create/update flows send and accept category consistently with the backend interface.",
+      "acceptanceCriteria": [
+        "TypeScript types used for Habit include category and compile without type errors.",
+        "useCreateHabit and useUpdateHabit send/accept category where needed and invalidate the same queries as before.",
+        "No changes are made to read-only/immutable hook files listed by the system constraints."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Update useCreateHabit and useUpdateHabit mutation function signatures to include category and call the backend with (name, color, category) / (id, name, color, category), preserving existing query invalidation behavior. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/CreateHabitModal.tsx",
+          "operation": "modify",
+          "description": "Align CreateHabitModal prop typing with updated create mutation payload by including category in onSubmit types; ensure the category value matches the backend Category enum used by the app. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/EditHabitModal.tsx",
+          "operation": "modify",
+          "description": "Align EditHabitModal prop typing with updated update mutation payload by including category in onSubmit types and using the Habit.category field for the initial value. Verify the component's usage instructions before implementing."
         }
       ]
     }

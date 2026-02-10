@@ -1,58 +1,71 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-09T16:36:09.921Z",
-  "summary": "REQ-1 branding text updates appear implemented in `frontend/index.html` and `frontend/src/App.tsx`. However, the diff does not show the required generated image assets for the new logo and favicon, and it also modifies a constrained hook file (`frontend/src/hooks/useInternetIdentity.ts`) which the BuildRequest explicitly forbids editing.",
+  "generatedAt": "2026-02-10T09:32:07.406Z",
+  "summary": "Diff implements a category concept end-to-end (backend type/API changes, frontend create/edit, HabitCard display, and a category filter). However, it diverges from the BuildRequest in key ways: backend uses a variant `Category` instead of a `Text` field, migration defaults to `#miscellaneous` instead of an English default like \"Personal\", and the create UI defaults/options do not include \"Personal\".",
   "missing_requirements": [
     {
-      "id": "REQ-2",
-      "requirement": "Create a new SUTRA logo image asset under `frontend/public/assets/generated/` (sutra-logo.dim_512x512.png) and use it in the app header in place of the existing icon logo.",
-      "reason": "`frontend/src/App.tsx` references `/assets/generated/sutra-logo.dim_512x512.png`, but the diff summary does not show any added image asset file under `frontend/public/assets/generated/` (only a non-image JSON file was added). Therefore the required logo asset itself is not evidenced as created/added.",
+      "id": "REQ-1",
+      "requirement": "Backend Habit type includes a Text category field and CRUD persists/returns category.",
+      "reason": "The backend defines `category : Category` where `Category` is a variant (e.g., `#work`, `#health`) rather than a `Text` field as required. The diff summary does not show all CRUD methods updated, and the type mismatch violates the acceptance criteria even if methods exist.",
       "evidence": [
-        "frontend/src/App.tsx",
-        "<file-diff>: ADDED FILES lists only project_state.json; no frontend/public/assets/generated/* entries"
+        "backend/main.mo",
+        "backend/migration.mo"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "requirement": "On upgrade, assign a safe default category (e.g., \"Personal\") for existing habits without category, ensuring non-empty category post-upgrade.",
+      "reason": "Migration assigns `category = #miscellaneous` (a variant), not an English text default like \"Personal\". This does not match the stated default example and also conflicts with REQ-1's required `Text` category field.",
+      "evidence": [
+        "backend/migration.mo"
       ]
     },
     {
       "id": "REQ-3",
-      "requirement": "Add a favicon image under `frontend/public/assets/generated/` (sutra-favicon.dim_32x32.png) and update `frontend/index.html` to reference it.",
-      "reason": "`frontend/index.html` was updated to reference `/assets/generated/sutra-favicon.dim_32x32.png`, but the diff summary does not show any added favicon image file under `frontend/public/assets/generated/`. Thus the required favicon asset itself is not evidenced as created/added.",
+      "requirement": "Create Habit modal includes a Category input with sensible defaults (at minimum: Health, Work, Personal).",
+      "reason": "Create UI includes Health and Work, but does not include a \"Personal\" option; it uses \"Miscellaneous\" instead.",
       "evidence": [
-        "frontend/index.html",
-        "<file-diff>: ADDED FILES lists only project_state.json; no frontend/public/assets/generated/* entries"
+        "frontend/src/components/CreateHabitModal.tsx"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Modified `frontend/src/hooks/useInternetIdentity.ts` despite an explicit constraint to not edit this file.",
-      "reason": "The BuildRequest constraints explicitly forbid editing `frontend/src/hooks/useInternetIdentity.ts`, but it is listed under MODIFIED FILES.",
+      "description": "Introduced an enum/variant-based Category taxonomy with multiple categories (hobby, exercise, education, social, finance, miscellaneous) rather than a simple Text category field.",
+      "reason": "BuildRequest requires a `Text` category field and only mandates default labels (Health/Work/Personal). The richer variant taxonomy and non-Text representation were not requested.",
       "evidence": [
-        "frontend/src/hooks/useInternetIdentity.ts",
-        "BuildRequest Constraints: \"Do not edit files under `frontend/src/hooks/useInternetIdentity.ts`...\""
+        "backend/main.mo",
+        "backend/migration.mo",
+        "frontend/src/components/CreateHabitModal.tsx",
+        "frontend/src/components/EditHabitModal.tsx"
       ]
     },
     {
-      "description": "Added project tracking/state file `project_state.json` unrelated to the requested rename/logo/favicon changes.",
-      "reason": "BuildRequest does not request adding project metadata/state files; this is extra work not tied to REQ-1/2/3.",
+      "description": "Added/changed user profile flow and role-assignment behavior (getCallerUserProfile/saveCallerUserProfile usage and automatic role assignment hook).",
+      "reason": "Not part of the habit categories requirements; appears as unrelated functionality changes.",
       "evidence": [
-        "project_state.json"
+        "frontend-file-summaries.txt (useEnsureUserRole.ts, ProfileSection.tsx, EditDisplayNameModal.tsx, useQueries.ts)"
       ]
     },
     {
-      "description": "Modified/added `frontend-file-summaries.txt`, which is not part of the requested implementation deliverables.",
-      "reason": "BuildRequest does not request creating or updating a file summaries document.",
+      "description": "Updated frontend index.html title/favicon assets.",
+      "reason": "Not requested by the BuildRequest.",
       "evidence": [
-        "frontend-file-summaries.txt"
+        "frontend-file-summaries.txt (frontend/index.html)"
       ]
     }
   ],
-  "confidence": 0.78,
+  "confidence": 0.72,
   "changed_files": [
+    "backend/main.mo",
+    "backend/migration.mo",
     "frontend-file-summaries.txt",
-    "frontend/index.html",
     "frontend/src/App.tsx",
-    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/components/CreateHabitModal.tsx",
+    "frontend/src/components/EditHabitModal.tsx",
+    "frontend/src/components/HabitCard.tsx",
+    "frontend/src/hooks/useQueries.ts",
     "project_state.json"
   ]
 }

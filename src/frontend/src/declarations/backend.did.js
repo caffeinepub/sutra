@@ -13,6 +13,16 @@ export const UserRole = IDL.Variant({
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
+export const Category = IDL.Variant({
+  'finance' : IDL.Null,
+  'social' : IDL.Null,
+  'hobby' : IDL.Null,
+  'miscellaneous' : IDL.Null,
+  'education' : IDL.Null,
+  'work' : IDL.Null,
+  'exercise' : IDL.Null,
+  'health' : IDL.Null,
+});
 export const HabitId = IDL.Text;
 export const UserProfile = IDL.Record({ 'displayName' : IDL.Text });
 export const Date = IDL.Text;
@@ -26,12 +36,13 @@ export const Habit = IDL.Record({
   'name' : IDL.Text,
   'createdAt' : Date,
   'color' : IDL.Text,
+  'category' : Category,
 });
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-  'createHabit' : IDL.Func([IDL.Text, IDL.Text], [HabitId], []),
+  'createHabit' : IDL.Func([IDL.Text, IDL.Text, Category], [HabitId], []),
   'deleteHabit' : IDL.Func([HabitId], [IDL.Bool], []),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
@@ -47,7 +58,11 @@ export const idlService = IDL.Service({
   'markCompletion' : IDL.Func([HabitId, Date, IDL.Bool], [IDL.Bool], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'setDisplayName' : IDL.Func([IDL.Text], [], []),
-  'updateHabit' : IDL.Func([HabitId, IDL.Text, IDL.Text], [IDL.Bool], []),
+  'updateHabit' : IDL.Func(
+      [HabitId, IDL.Text, IDL.Text, Category],
+      [IDL.Bool],
+      [],
+    ),
 });
 
 export const idlInitArgs = [];
@@ -57,6 +72,16 @@ export const idlFactory = ({ IDL }) => {
     'admin' : IDL.Null,
     'user' : IDL.Null,
     'guest' : IDL.Null,
+  });
+  const Category = IDL.Variant({
+    'finance' : IDL.Null,
+    'social' : IDL.Null,
+    'hobby' : IDL.Null,
+    'miscellaneous' : IDL.Null,
+    'education' : IDL.Null,
+    'work' : IDL.Null,
+    'exercise' : IDL.Null,
+    'health' : IDL.Null,
   });
   const HabitId = IDL.Text;
   const UserProfile = IDL.Record({ 'displayName' : IDL.Text });
@@ -71,12 +96,13 @@ export const idlFactory = ({ IDL }) => {
     'name' : IDL.Text,
     'createdAt' : Date,
     'color' : IDL.Text,
+    'category' : Category,
   });
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-    'createHabit' : IDL.Func([IDL.Text, IDL.Text], [HabitId], []),
+    'createHabit' : IDL.Func([IDL.Text, IDL.Text, Category], [HabitId], []),
     'deleteHabit' : IDL.Func([HabitId], [IDL.Bool], []),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
@@ -96,7 +122,11 @@ export const idlFactory = ({ IDL }) => {
     'markCompletion' : IDL.Func([HabitId, Date, IDL.Bool], [IDL.Bool], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'setDisplayName' : IDL.Func([IDL.Text], [], []),
-    'updateHabit' : IDL.Func([HabitId, IDL.Text, IDL.Text], [IDL.Bool], []),
+    'updateHabit' : IDL.Func(
+        [HabitId, IDL.Text, IDL.Text, Category],
+        [IDL.Bool],
+        [],
+      ),
   });
 };
 

@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { X, User } from "lucide-react";
+import { X, User, AlertCircle } from "lucide-react";
 
 interface EditDisplayNameModalProps {
   currentDisplayName: string | null | undefined;
   onClose: () => void;
   onSubmit: (displayName: string) => void;
   isLoading: boolean;
+  error?: string | null;
 }
 
 function EditDisplayNameModal({
@@ -13,6 +14,7 @@ function EditDisplayNameModal({
   onClose,
   onSubmit,
   isLoading,
+  error,
 }: EditDisplayNameModalProps) {
   const [displayName, setDisplayName] = useState(currentDisplayName || "");
 
@@ -38,10 +40,18 @@ function EditDisplayNameModal({
           <button
             onClick={onClose}
             className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            disabled={isLoading}
           >
             <X className="w-5 h-5" />
           </button>
         </div>
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-red-800">{error}</p>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
@@ -61,6 +71,7 @@ function EditDisplayNameModal({
               required
               maxLength={50}
               autoFocus
+              disabled={isLoading}
             />
             <p className="mt-1 text-sm text-gray-500">
               This name will be visible in your profile.
@@ -72,6 +83,7 @@ function EditDisplayNameModal({
               type="button"
               onClick={onClose}
               className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors"
+              disabled={isLoading}
             >
               Cancel
             </button>

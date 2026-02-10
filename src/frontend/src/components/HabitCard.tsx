@@ -8,11 +8,23 @@ import {
 } from "../hooks/useQueries";
 import EditHabitModal from "./EditHabitModal";
 import HabitHistoryModal from "./HabitHistoryModal";
-import type { Habit } from "../backend";
+import type { Habit, Category } from "../backend";
+import { Badge } from "@/components/ui/badge";
 
 interface HabitCardProps {
   habit: Habit;
 }
+
+const CATEGORY_LABELS: Record<string, string> = {
+  health: "Health",
+  exercise: "Exercise",
+  work: "Work",
+  education: "Education",
+  hobby: "Hobby",
+  social: "Social",
+  finance: "Finance",
+  miscellaneous: "Miscellaneous",
+};
 
 function HabitCard({ habit }: HabitCardProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -113,8 +125,8 @@ function HabitCard({ habit }: HabitCardProps) {
     setIsEditModalOpen(true);
   };
 
-  const handleUpdate = async (name: string, color: string) => {
-    await updateHabitMutation.mutateAsync({ id: habit.id, name, color });
+  const handleUpdate = async (name: string, color: string, category: Category) => {
+    await updateHabitMutation.mutateAsync({ id: habit.id, name, color, category });
     setIsEditModalOpen(false);
   };
 
@@ -215,6 +227,9 @@ function HabitCard({ habit }: HabitCardProps) {
             <h3 className="font-semibold text-gray-800 truncate">
               {habit.name}
             </h3>
+            <Badge variant="secondary" className="text-xs">
+              {CATEGORY_LABELS[habit.category] || habit.category}
+            </Badge>
           </div>
           <div className="flex gap-2">
             <button

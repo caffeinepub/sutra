@@ -2,49 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-rename-all-user-facing-application-naming-from-habitual-to-sutra-including-the-browser-tab-title-and-the-main-header-welcome-text-in-the-ui",
-      "featureTitle": "Rename all user-facing application naming from “Habitual” to “SUTRA”, including the browser tab title and the main header/welcome text in the UI.",
+      "featureId": "feature-update-the-habit-create-flow-ui-to-allow-selecting-a-habit-category-and-submit-the-selected-category-when-creating-a-habit",
+      "featureTitle": "Update the habit create flow UI to allow selecting a habit category, and submit the selected category when creating a habit.",
       "files": [
-        "frontend/index.html",
-        "frontend/src/App.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "build-template-react@1.0.0",
-        "shadcn-ui@1.0.0",
-        "initial-app@1.0.0",
-        "authorization@4.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-1"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-create-a-new-sutra-logo-image-asset-matching-the-uploaded-reference-logo-image-png-and-use-it-in-the-app-header-in-place-of-the-current-green-gradient-square-checkmark-icon-logo",
-      "featureTitle": "Create a new SUTRA logo image asset matching the uploaded reference logo (image.png) and use it in the app header in place of the current green gradient square + checkmark icon logo.",
-      "files": [
-        "frontend/src/App.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "build-template-react@1.0.0",
-        "shadcn-ui@1.0.0",
-        "initial-app@1.0.0",
-        "authorization@4.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-2"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-a-favicon-derived-from-the-sutra-logo-and-update-frontend-index-html-to-reference-it-so-browser-tabs-show-the-sutra-icon",
-      "featureTitle": "Add a favicon derived from the SUTRA logo and update `frontend/index.html` to reference it so browser tabs show the SUTRA icon.",
-      "files": [
-        "frontend/index.html"
+        "frontend/src/App.tsx",
+        "frontend/src/components/CreateHabitModal.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -56,6 +18,67 @@
       ],
       "testIds": [
         "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-habit-edit-flow-ui-to-allow-changing-a-habit-category-and-submit-the-selected-category-when-saving-edits",
+      "featureTitle": "Update the habit edit flow UI to allow changing a habit category, and submit the selected category when saving edits.",
+      "files": [
+        "frontend/src/components/EditHabitModal.tsx",
+        "frontend/src/components/HabitCard.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "build-template-react@1.0.0",
+        "shadcn-ui@1.0.0",
+        "initial-app@1.0.0",
+        "authorization@4.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-display-habit-categories-in-the-main-habits-view-so-users-can-visually-distinguish-and-organize-habits-by-category",
+      "featureTitle": "Display habit categories in the main habits view so users can visually distinguish and organize habits by category.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/HabitCard.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "build-template-react@1.0.0",
+        "shadcn-ui@1.0.0",
+        "initial-app@1.0.0",
+        "authorization@4.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-frontend-s-backend-type-usage-and-react-query-hooks-mutations-to-match-the-updated-backend-habit-category-api",
+      "featureTitle": "Update the frontend’s backend type usage and React Query hooks/mutations to match the updated backend habit/category API.",
+      "files": [
+        "frontend/src/components/CreateHabitModal.tsx",
+        "frontend/src/components/EditHabitModal.tsx",
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "build-template-react@1.0.0",
+        "shadcn-ui@1.0.0",
+        "initial-app@1.0.0",
+        "authorization@4.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
       ],
       "confidence": "high"
     }

@@ -1,10 +1,53 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useActor } from "./useActor";
-import type { Habit, Completion } from "../backend";
+import { useInternetIdentity } from "./useInternetIdentity";
+import type { Habit, Completion, UserProfile, Category } from "../backend";
+
+// Get caller's user profile
+export function useGetCallerUserProfile() {
+  const { actor, isFetching: actorFetching } = useActor();
+  const { identity } = useInternetIdentity();
+  const isAuthenticated = !!identity;
+
+  const query = useQuery<UserProfile | null>({
+    queryKey: ['currentUserProfile'],
+    queryFn: async () => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.getCallerUserProfile();
+    },
+    enabled: !!actor && !actorFetching && isAuthenticated,
+    retry: false,
+  });
+
+  // Return custom state that properly reflects actor dependency
+  return {
+    ...query,
+    isLoading: actorFetching || query.isLoading,
+    isFetched: !!actor && query.isFetched,
+  };
+}
+
+// Save caller's user profile
+export function useSaveCallerUserProfile() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (profile: UserProfile) => {
+      if (!actor) throw new Error("Actor not available");
+      return actor.saveCallerUserProfile(profile);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentUserProfile"] });
+    },
+  });
+}
 
 // Get all habits
 export function useHabits() {
   const { actor, isFetching } = useActor();
+  const { identity } = useInternetIdentity();
+  const isAuthenticated = !!identity;
 
   return useQuery<Habit[]>({
     queryKey: ["habits"],
@@ -12,13 +55,15 @@ export function useHabits() {
       if (!actor) return [];
       return actor.getHabits();
     },
-    enabled: !!actor && !isFetching,
+    enabled: !!actor && !isFetching && isAuthenticated,
   });
 }
 
 // Get completions for a specific habit
 export function useHabitCompletions(habitId: string) {
   const { actor, isFetching } = useActor();
+  const { identity } = useInternetIdentity();
+  const isAuthenticated = !!identity;
 
   return useQuery<Completion[]>({
     queryKey: ["completions", habitId],
@@ -35,7 +80,7 @@ export function useHabitCompletions(habitId: string) {
       });
       return Array.from(completionMap.values());
     },
-    enabled: !!actor && !isFetching && !!habitId,
+    enabled: !!actor && !isFetching && !!habitId && isAuthenticated,
   });
 }
 
@@ -45,9 +90,9 @@ export function useCreateHabit() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ name, color }: { name: string; color: string }) => {
+    mutationFn: async ({ name, color, category }: { name: string; color: string; category: Category }) => {
       if (!actor) throw new Error("Actor not available");
-      return actor.createHabit(name, color);
+      return actor.createHabit(name, color, category);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["habits"] });
@@ -65,13 +110,15 @@ export function useUpdateHabit() {
       id,
       name,
       color,
+      category,
     }: {
       id: string;
       name: string;
       color: string;
+      category: Category;
     }) => {
       if (!actor) throw new Error("Actor not available");
-      return actor.updateHabit(id, name, color);
+      return actor.updateHabit(id, name, color, category);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["habits"] });
@@ -183,36 +230,6 @@ export function useDeleteHabit() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["habits"] });
-    },
-  });
-}
-
-// Get display name
-export function useGetDisplayName() {
-  const { actor, isFetching } = useActor();
-
-  return useQuery<string | null>({
-    queryKey: ["displayName"],
-    queryFn: async () => {
-      if (!actor) return null;
-      return actor.getDisplayName();
-    },
-    enabled: !!actor && !isFetching,
-  });
-}
-
-// Set display name
-export function useSetDisplayName() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (displayName: string) => {
-      if (!actor) throw new Error("Actor not available");
-      return actor.setDisplayName(displayName);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["displayName"] });
     },
   });
 }

@@ -1,18 +1,26 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useInternetIdentity } from "./hooks/useInternetIdentity";
 import { useQueryClient } from "@tanstack/react-query";
 import { useHabits, useCreateHabit } from "./hooks/useQueries";
+import { useEnsureUserRole } from "./hooks/useEnsureUserRole";
 import HabitCard from "./components/HabitCard";
 import CreateHabitModal from "./components/CreateHabitModal";
 import ProfileSection from "./components/ProfileSection";
 import { Plus, Heart, User, LogIn, Target } from "lucide-react";
+import { getUserFacingError } from "./utils/userFacingErrors";
+import { Category } from "./backend";
 
 function App() {
   const { isInitializing, identity, login } = useInternetIdentity();
   const queryClient = useQueryClient();
   const isAuthenticated = !!identity;
 
+  // Ensure user role is assigned after login
+  useEnsureUserRole();
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [createHabitError, setCreateHabitError] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const { data: habits = [], isLoading } = useHabits();
   const createHabitMutation = useCreateHabit();
 
@@ -22,9 +30,46 @@ function App() {
     }
   }, [isAuthenticated, isInitializing, queryClient]);
 
-  const handleCreateHabit = async (name: string, color: string) => {
-    await createHabitMutation.mutateAsync({ name, color });
+  // Get unique categories from habits
+  const availableCategories = useMemo(() => {
+    const categories = new Set(habits.map((habit) => habit.category));
+    return Array.from(categories).sort();
+  }, [habits]);
+
+  // Filter habits by selected category
+  const filteredHabits = useMemo(() => {
+    if (selectedCategory === "all") {
+      return habits;
+    }
+    return habits.filter((habit) => habit.category === selectedCategory);
+  }, [habits, selectedCategory]);
+
+  const handleCreateHabit = async (name: string, color: string, category: Category) => {
+    try {
+      setCreateHabitError(null);
+      await createHabitMutation.mutateAsync({ name, color, category });
+      setIsCreateModalOpen(false);
+    } catch (error) {
+      const errorMessage = getUserFacingError(error);
+      setCreateHabitError(errorMessage);
+      // Keep modal open to show error
+    }
+  };
+
+  const handleCloseCreateModal = () => {
     setIsCreateModalOpen(false);
+    setCreateHabitError(null);
+  };
+
+  const CATEGORY_LABELS: Record<string, string> = {
+    health: "Health",
+    exercise: "Exercise",
+    work: "Work",
+    education: "Education",
+    hobby: "Hobby",
+    social: "Social",
+    finance: "Finance",
+    miscellaneous: "Miscellaneous",
   };
 
   if (isInitializing) {
@@ -47,7 +92,7 @@ function App() {
             style={{ paddingRight: "1rem" }}
           >
             <img 
-              src="/assets/generated/sutra-logo.dim_512x512.png" 
+              src="/assets/generated/sutra-logo-v2.dim_512x512.png" 
               alt="SUTRA Logo" 
               className="w-12 h-12 object-contain"
             />
@@ -154,11 +199,44 @@ function App() {
                 </div>
               </div>
             ) : (
-              <div className="flex flex-wrap gap-6 justify-center">
-                {habits.map((habit) => (
-                  <HabitCard key={habit.id} habit={habit} />
-                ))}
-              </div>
+              <>
+                {/* Category filter */}
+                {availableCategories.length > 0 && (
+                  <div className="mb-6 flex justify-center">
+                    <div className="inline-flex gap-2 bg-white rounded-lg p-2 shadow-md">
+                      <button
+                        onClick={() => setSelectedCategory("all")}
+                        className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                          selectedCategory === "all"
+                            ? "bg-green-600 text-white"
+                            : "text-gray-700 hover:bg-gray-100"
+                        }`}
+                      >
+                        All
+                      </button>
+                      {availableCategories.map((category) => (
+                        <button
+                          key={category}
+                          onClick={() => setSelectedCategory(category)}
+                          className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                            selectedCategory === category
+                              ? "bg-green-600 text-white"
+                              : "text-gray-700 hover:bg-gray-100"
+                          }`}
+                        >
+                          {CATEGORY_LABELS[category] || category}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex flex-wrap gap-6 justify-center">
+                  {filteredHabits.map((habit) => (
+                    <HabitCard key={habit.id} habit={habit} />
+                  ))}
+                </div>
+              </>
             )}
           </div>
         )}
@@ -179,9 +257,10 @@ function App() {
 
       {isAuthenticated && isCreateModalOpen && (
         <CreateHabitModal
-          onClose={() => setIsCreateModalOpen(false)}
+          onClose={handleCloseCreateModal}
           onSubmit={handleCreateHabit}
           isLoading={createHabitMutation.isPending}
+          error={createHabitError}
         />
       )}
     </div>

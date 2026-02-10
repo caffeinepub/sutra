@@ -1,15 +1,19 @@
 import { useState, useRef, useEffect } from "react";
 import { useInternetIdentity } from "../hooks/useInternetIdentity";
+import { useQueryClient } from "@tanstack/react-query";
 import { User, Edit3, LogOut, LogIn } from "lucide-react";
-import { useGetDisplayName, useSetDisplayName } from "../hooks/useQueries";
+import { useGetCallerUserProfile, useSaveCallerUserProfile } from "../hooks/useQueries";
 import EditDisplayNameModal from "./EditDisplayNameModal";
+import { getUserFacingError } from "../utils/userFacingErrors";
 
 export default function ProfileSection() {
   const { identity, login, clear } = useInternetIdentity();
-  const { data: displayName } = useGetDisplayName();
-  const setDisplayNameMutation = useSetDisplayName();
+  const queryClient = useQueryClient();
+  const { data: userProfile, isLoading: profileLoading, isFetched } = useGetCallerUserProfile();
+  const saveProfileMutation = useSaveCallerUserProfile();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const isAuthenticated = !!identity;
@@ -31,16 +35,30 @@ export default function ProfileSection() {
   const handleEdit = () => {
     setIsEditModalOpen(true);
     setIsDropdownOpen(false);
+    setSaveError(null);
   };
 
   const handleSaveDisplayName = async (newDisplayName: string) => {
-    await setDisplayNameMutation.mutateAsync(newDisplayName);
-    setIsEditModalOpen(false);
+    try {
+      setSaveError(null);
+      await saveProfileMutation.mutateAsync({ displayName: newDisplayName });
+      setIsEditModalOpen(false);
+    } catch (error) {
+      const errorMessage = getUserFacingError(error);
+      setSaveError(errorMessage);
+      // Keep modal open to show error
+    }
   };
 
-  const handleSignOut = () => {
-    clear();
+  const handleSignOut = async () => {
+    await clear();
+    queryClient.clear();
     setIsDropdownOpen(false);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setSaveError(null);
   };
 
   if (!isAuthenticated) {
@@ -55,12 +73,14 @@ export default function ProfileSection() {
     );
   }
 
+  const displayName = userProfile?.displayName || "Anonymous User";
+
   return (
     <>
       <div className="relative" ref={dropdownRef}>
         <div className="flex items-center space-x-3">
           <span className="text-gray-700 font-medium">
-            {displayName || "Anonymous User"}
+            {profileLoading ? "Loading..." : displayName}
           </span>
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -92,10 +112,11 @@ export default function ProfileSection() {
 
       {isEditModalOpen && (
         <EditDisplayNameModal
-          currentDisplayName={displayName}
-          onClose={() => setIsEditModalOpen(false)}
+          currentDisplayName={userProfile?.displayName}
+          onClose={handleCloseEditModal}
           onSubmit={handleSaveDisplayName}
-          isLoading={setDisplayNameMutation.isPending}
+          isLoading={saveProfileMutation.isPending}
+          error={saveError}
         />
       )}
     </>

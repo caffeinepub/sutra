@@ -10,6 +10,14 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export type Category = { 'finance' : null } |
+  { 'social' : null } |
+  { 'hobby' : null } |
+  { 'miscellaneous' : null } |
+  { 'education' : null } |
+  { 'work' : null } |
+  { 'exercise' : null } |
+  { 'health' : null };
 export interface Completion {
   'date' : Date,
   'completed' : boolean,
@@ -21,6 +29,7 @@ export interface Habit {
   'name' : string,
   'createdAt' : Date,
   'color' : string,
+  'category' : Category,
 }
 export type HabitId = string;
 export interface UserProfile { 'displayName' : string }
@@ -30,7 +39,7 @@ export type UserRole = { 'admin' : null } |
 export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
-  'createHabit' : ActorMethod<[string, string], HabitId>,
+  'createHabit' : ActorMethod<[string, string, Category], HabitId>,
   'deleteHabit' : ActorMethod<[HabitId], boolean>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
@@ -42,7 +51,7 @@ export interface _SERVICE {
   'markCompletion' : ActorMethod<[HabitId, Date, boolean], boolean>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'setDisplayName' : ActorMethod<[string], undefined>,
-  'updateHabit' : ActorMethod<[HabitId, string, string], boolean>,
+  'updateHabit' : ActorMethod<[HabitId, string, string, Category], boolean>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];
